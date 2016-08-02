@@ -41,33 +41,96 @@ function drawTheArrow(g,i)
 	// These points need to be rotated using the sine & cosine values 
 	// to point the arrow in the correct directions. 
 	
-	// Line One:
-	x = -20; y = 0;
-	rx = x*cosine - y * sine;
-	ry = x*sine   + y * cosine;
-	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
-	x =  20; y = 0;
-	rx = x*cosine - y * sine;
-	ry = x*sine   + y * cosine;
-	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
-
-	// Line Two and three:
-	x = 10; y = +10;
-	rx = x*cosine - y * sine;
-	ry = x*sine   + y * cosine;
-	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
-	x = 20; y = 0;
-	rx = x*cosine - y * sine;
-	ry = x*sine   + y * cosine;
-	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
-	x = 10; y = -10;
-	rx = x*cosine - y * sine;
-	ry = x*sine   + y * cosine;
-	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
 	////////////////////////////////////
 	// And this actually draws the lines
 	// on the canvas
 	////////////////////////////////////
+	//muzzle of the cannon
+	g.strokeStyle = "#000000"; // Draw black lines
+	x = +20; y = -5;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
+	x = 20; y = 5;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = 15; y = 5;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = 15; y = -5;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);
+	g.closePath();
+	g.fill();
+	
+	//body of cannon
+	
+	g.beginPath();
+	x = 15; y = -3;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
+	x = -15; y = -7;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = -20; y = 0;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = -15; y = 7;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);
+	x = +15; y = 3;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	g.stroke();
+	
+	//left wheel of cannon
+	
+	g.beginPath();
+	x = +13; y = -7;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
+	x = -13; y = -11;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = -13; y = -13;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = 13; y = -9;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);
+	g.closePath();
+	g.stroke();
+	// right wheel of cannon
+	g.beginPath();
+	x = -13; y = 7;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
+	x = 13; y = 11;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = 13; y = 13;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
+	x = -13; y = 9;
+	rx = x*cosine - y * sine;
+	ry = x*sine   + y * cosine;;
+	g.lineTo(arrow[0]+rx, arrow[1]+ry);
+	g.closePath();
 	g.stroke();
 }
 
@@ -236,7 +299,7 @@ function runGame()
 	var img;
 	var i;
 
-	img        = document.getElementById("moon");
+	img        = document.getElementById("backdrop");
 	
 	// Update the position of every blog
 	for(i = 0; i < blobs.length; i++) {
@@ -255,7 +318,7 @@ function runGame()
 
 	// Draw the background image
 	ctx = gameCanvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);	
+    ctx.drawImage(img, 0, 0, 600, 400);	
 
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(290, 190, 20, 20);
