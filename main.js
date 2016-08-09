@@ -9,12 +9,12 @@ var cursorY = 10;
 // Lists of things to draw
 var blobs;
 var arrows;
-    
+var selected = 3;   
 function drawTheblob(g,i)
 {
 	var blob = blobs[i];
 	var img        = document.getElementById("dot");
-	g.drawImage(img, blob[0], blob[1]);	
+	g.drawImage(img, blob[0]-7, blob[1]-7);	
 }
 
 function drawTheArrow(g,i)
@@ -114,19 +114,19 @@ function drawTheArrow(g,i)
 	g.stroke();
 	// right wheel of cannon
 	g.beginPath();
-	x = -13; y = 7;
+	x = 13; y = 7;
 	rx = x*cosine - y * sine;
 	ry = x*sine   + y * cosine;
 	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
-	x = 13; y = 11;
+	x = -13; y = 11;
 	rx = x*cosine - y * sine;
 	ry = x*sine   + y * cosine;
 	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
-	x = 13; y = 13;
+	x = -13; y = 13;
 	rx = x*cosine - y * sine;
 	ry = x*sine   + y * cosine
 	g.lineTo(arrow[0]+rx, arrow[1]+ry);	
-	x = -13; y = 9;
+	x = 13; y = 9;
 	rx = x*cosine - y * sine;
 	ry = x*sine   + y * cosine;;
 	g.lineTo(arrow[0]+rx, arrow[1]+ry);
@@ -164,42 +164,42 @@ function startGame()
 	// Create 10 object to be drawn on the screen. at random positions moving in random directions
 	
 	blobs = [];
-	for(i = 0; i < 10; i++) {
-	    blobs[i] = [ Math.floor(Math.random() *580),Math.floor(Math.random() *380), Math.floor(Math.random() *2)*2-1, Math.floor(Math.random() *2)*2-1];
-    }
+	//for(i = 0; i < 10; i++) {
+	//    blobs[i] = [ Math.floor(Math.random() *580),Math.floor(Math.random() *380), Math.floor(Math.random() *2)*2-1, Math.floor(Math.random() *2)*2-1];
+    //}
 	
 	// Now create 24 arrows, evenly spaced over the screen
 	// These will all point at the mouse cursor once a 
 	// 'mousemove' event has been seen.
 	arrows = [];
 							// X    Y   Sin  Cos
-	arrows[arrows.length]  = [ 50, 50,0.707,0.707];
-	arrows[arrows.length]  = [150, 50,0.707,0.707];
-	arrows[arrows.length]  = [250, 50,0.707,0.707];
-	arrows[arrows.length]  = [350, 50,0.707,0.707];
-	arrows[arrows.length]  = [450, 50,0.707,0.707];
-	arrows[arrows.length]  = [550, 50,0.707,0.707];
+	arrows[arrows.length]  = [ 50, 50,0.707,0.707, 20];
+	arrows[arrows.length]  = [150, 50,0.707,0.707, 40];
+	arrows[arrows.length]  = [250, 50,0.707,0.707, 13];
+	arrows[arrows.length]  = [350, 50,0.707,0.707, 44];
+	arrows[arrows.length]  = [450, 50,0.707,0.707, 72];
+	arrows[arrows.length]  = [550, 50,0.707,0.707, 64];
 
-	arrows[arrows.length]  = [ 50,150,0.707,0.707];
-	arrows[arrows.length]  = [150,150,0.707,0.707];
-	arrows[arrows.length]  = [250,150,0.707,0.707];
-	arrows[arrows.length]  = [350,150,0.707,0.707];
-	arrows[arrows.length]  = [450,150,0.707,0.707];
-	arrows[arrows.length]  = [550,150,0.707,0.707];
+//	arrows[arrows.length]  = [ 50,150,0.707,0.707];
+//	arrows[arrows.length]  = [150,150,0.707,0.707];
+//	arrows[arrows.length]  = [250,150,0.707,0.707];
+//	arrows[arrows.length]  = [350,150,0.707,0.707];
+//	arrows[arrows.length]  = [450,150,0.707,0.707];
+//	arrows[arrows.length]  = [550,150,0.707,0.707];
 
-	arrows[arrows.length]  = [ 50,250,0.707,0.707];
-	arrows[arrows.length]  = [150,250,0.707,0.707];
-	arrows[arrows.length]  = [250,250,0.707,0.707];
-	arrows[arrows.length]  = [350,250,0.707,0.707];
-	arrows[arrows.length]  = [450,250,0.707,0.707];
-	arrows[arrows.length]  = [550,250,0.707,0.707];
+//	arrows[arrows.length]  = [ 50,250,0.707,0.707];
+//	arrows[arrows.length]  = [150,250,0.707,0.707];
+//	arrows[arrows.length]  = [250,250,0.707,0.707];
+//	arrows[arrows.length]  = [350,250,0.707,0.707];
+//	arrows[arrows.length]  = [450,250,0.707,0.707];
+//	arrows[arrows.length]  = [550,250,0.707,0.707];
 
-	arrows[arrows.length]  = [ 50,350,0.707,0.707];
-	arrows[arrows.length]  = [150,350,0.707,0.707];
-	arrows[arrows.length]  = [250,350,0.707,0.707];
-	arrows[arrows.length]  = [350,350,0.707,0.707];
-	arrows[arrows.length]  = [450,350,0.707,0.707];
-	arrows[arrows.length]  = [550,350,0.707,0.707];
+//	arrows[arrows.length]  = [ 50,350,0.707,0.707];
+//	arrows[arrows.length]  = [150,350,0.707,0.707];
+//	arrows[arrows.length]  = [250,350,0.707,0.707];
+//	arrows[arrows.length]  = [350,350,0.707,0.707];
+//	arrows[arrows.length]  = [450,350,0.707,0.707];
+//	arrows[arrows.length]  = [550,350,0.707,0.707];
 
 	// Set a timer, which will call "runGame()" 40 times a second (every 25ms)
 	gameInterval = setInterval(runGame, 25);
@@ -220,11 +220,8 @@ function canvasMove(E)
 	angle = Math.random() * 2 * 3.141592;
 	
 	// Set the top left corner to be a 'up' and 'left' of the mouse cursor location
-	blobs[blobs.length] = [E.pageX-11, E.pageY-11, Math.sin(angle), Math.cos(angle)];
+//	blobs[blobs.length] = [E.pageX-11, E.pageY-11, Math.sin(angle), Math.cos(angle)];
 
-	// If we have too many blobs, remove the first one
-	if(blobs.length > 50)
-		blobs.shift();
 	
 	////////////////////////////////////////////////
 	// Update the direction of the arrows
@@ -245,6 +242,9 @@ function canvasMove(E)
 			arrow[2] = dy / length;
 			arrow[3] = dx / length;
 		}
+		if(dx*dx+dy*dy<20*20) {
+			selected=i;
+		}
 	}
 }
 
@@ -256,25 +256,25 @@ function updateBlobPosition(i)
 	///////////////////////////////////////////
 	
 	// Change the X position, and maybe bounce
-	if(blobs[i][2] >= 1) {
+	if(blobs[i][2] >= 0) {
 	   blobs[i][0] = blobs[i][0]+blobs[i][2];
-	   if(blobs[i][0] > 585)
+	   if(blobs[i][0] > 592) 
 		 blobs[i][2] *= -1;
 	} else {
 	   blobs[i][0] = blobs[i][0]+blobs[i][2];
-	   if(blobs[i][0] < 0)
+	   if(blobs[i][0] < 8)
 		 blobs[i][2] *= -1;	   
 	}
 
 	// Change the Y position, and maybe bounce
 	if(blobs[i][3] >= 0) {
 	   blobs[i][1] = blobs[i][1]+blobs[i][3];
-	   if(blobs[i][1] > 385) {
+	   if(blobs[i][1] > 392) {
 		 blobs[i][3] *= -1;
 	   }
 	} else {
 	   blobs[i][1] = blobs[i][1]+blobs[i][3];
-	   if(blobs[i][1] < 0)
+	   if(blobs[i][1] < 8)
 		 blobs[i][3] *= -1;	   
 	}
 }
@@ -310,7 +310,27 @@ function runGame()
 	for(i = 0; i < blobs.length; i++) {
   	    seeIfWallHit(i);
 	}
+////////////////////////////////////////////////////////
+	// Draw each of the arrows
+	for(i = 0; i < arrows.length; i++) {
+		var a = arrows[i];
+		if(a[4] == 0){
+			if(i == selected){
+				blobs[blobs.length] = [a[0]+a[3]*20, a[1]+a[2]*20, a[3]*3, a[2]*3];
+				a[4]=200;
+			}
+		   
 
+		}  else{
+			arrows[i][4] = arrows[i][4]-1;
+		}
+ 	    
+	
+	}
+	// If we have too many blobs, remove the first one
+	if(blobs.length > 50)
+		blobs.shift();
+	
 	//////////////////////////////////////////////
 	// Now to draw everything!
 	//////////////////////////////////////////////
