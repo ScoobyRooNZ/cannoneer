@@ -12,9 +12,18 @@ var arrows;
 var selected = 3;   
 function drawTheblob(g,i)
 {
-	var blob = blobs[i];
-	var img        = document.getElementById("dot");
-	g.drawImage(img, blob[0]-7, blob[1]-7);	
+	var blob = blobs[i];	
+	var colour;
+	if(blob[5]==-2) colour = "#0000ff"; // Draw black lines
+	if(blob[5]==-1) colour = "#8080ff"; // Draw black lines
+	if(blob[5]==0) return;
+	if(blob[5]==1) colour = "#ff8080"; // Draw black lines
+	if(blob[5]==2) colour = "#ff0000"; // Draw black lines
+	g.strokeStyle = colour;
+	g.fillStyle = colour;
+	g.beginPath();
+	g.arc(blob[0],blob[1],7,0,2*Math.PI);
+	g.fill();
 }
 
 function drawTheArrow(g,i)
@@ -46,8 +55,15 @@ function drawTheArrow(g,i)
 	// on the canvas
 	////////////////////////////////////
 	//muzzle of the cannon
-	g.strokeStyle = "#000000"; // Draw black lines
-	x = +20; y = -5;
+var colour;
+	if(arrow[5]==-2) colour = "#0000ff"; // Draw black lines
+	if(arrow[5]==-1) colour = "#8080ff"; // Draw black lines
+	if(arrow[5]==0) colour = "#c0c0c0"; // Draw black lines
+	if(arrow[5]==1) colour = "#ff8080"; // Draw black lines
+	if(arrow[5]==2) colour = "#ff0000"; // Draw black lines
+g.strokeStyle = colour;
+g.fillStyle = colour;
+x = +20; y = -5;
 	rx = x*cosine - y * sine;
 	ry = x*sine   + y * cosine;
 	g.moveTo(arrow[0]+rx, arrow[1]+ry);	
@@ -64,7 +80,7 @@ function drawTheArrow(g,i)
 	ry = x*sine   + y * cosine;;
 	g.lineTo(arrow[0]+rx, arrow[1]+ry);
 	g.closePath();
-	g.fill();
+	g.fill();	
 	
 	//body of cannon
 	
@@ -173,12 +189,12 @@ function startGame()
 	// 'mousemove' event has been seen.
 	arrows = [];
 							// X    Y   Sin  Cos
-	arrows[arrows.length]  = [ 50, 50,0.707,0.707, 20];
-	arrows[arrows.length]  = [150, 50,0.707,0.707, 40];
-	arrows[arrows.length]  = [250, 50,0.707,0.707, 13];
-	arrows[arrows.length]  = [350, 50,0.707,0.707, 44];
-	arrows[arrows.length]  = [450, 50,0.707,0.707, 72];
-	arrows[arrows.length]  = [550, 50,0.707,0.707, 64];
+	arrows[arrows.length]  = [ 50, 50,0.707,0.707, 20, -2];
+	arrows[arrows.length]  = [150, 50,0.707,0.707, 40, -1];
+	arrows[arrows.length]  = [250, 50,0.707,0.707, 13, 0];
+	arrows[arrows.length]  = [350, 50,0.707,0.707, 44, 0];
+	arrows[arrows.length]  = [450, 50,0.707,0.707, 72, 1];
+	arrows[arrows.length]  = [550, 50,0.707,0.707, 64, 2];
 
 //	arrows[arrows.length]  = [ 50,150,0.707,0.707];
 //	arrows[arrows.length]  = [150,150,0.707,0.707];
@@ -289,6 +305,31 @@ function seeIfWallHit(i) {
 		}
 	}
 }
+function SeeIfCannonHit(i) {
+	////////////////////////////////////////////
+	// Test to see if the 15x15 blob is close to 
+	// the 20x20 block in the middle of the screen
+	///////////////////////////////////////////////
+	var b = blobs[i];
+	for(i = 0; i < arrows.length; i++) {
+		var a = arrows[i];
+		var dx = a[0]-b[0];
+		var dy = a[1]-b[1];
+		var distance = Math.sqrt(dx*dx+dy*dy);
+		if (distance< 25){
+			if (b[5] <0){
+				if (a[5]>-2)
+					a[5]=a[5]-1;
+			}
+			if (b[5] >0){
+				if (a[5]<2)
+					a[5]=a[5]+1;
+			}
+			b[5]=0;
+		}
+	}
+	
+}
 
 function runGame()
 {
@@ -310,13 +351,17 @@ function runGame()
 	for(i = 0; i < blobs.length; i++) {
   	    seeIfWallHit(i);
 	}
+	
+	for(i = 0; i < blobs.length; i++) {
+  	    SeeIfCannonHit(i);
+	}
 ////////////////////////////////////////////////////////
 	// Draw each of the arrows
 	for(i = 0; i < arrows.length; i++) {
 		var a = arrows[i];
 		if(a[4] == 0){
 			if(i == selected){
-				blobs[blobs.length] = [a[0]+a[3]*20, a[1]+a[2]*20, a[3]*3, a[2]*3];
+				blobs[blobs.length] = [a[0]+a[3]*26, a[1]+a[2]*26, a[3]*3, a[2]*3, 0, a[5]];
 				a[4]=200;
 			}
 		   
