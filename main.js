@@ -2,7 +2,9 @@ var gameInterval;
 var gameCanvas;
 var eventCatcherDiv;
 
-
+var introCountdown = 200;
+var currentLevel = 1;
+var finishTime = 200;
 var cursorX = 10;
 var cursorY = 10;
 
@@ -16,7 +18,7 @@ function drawTheblob(g,i)
 	var colour;
 	if(blob[5]==-2) colour = "#0000ff"; // Draw black lines
 	if(blob[5]==-1) colour = "#8080ff"; // Draw black lines
-	if(blob[5]==0) return;
+	if(blob[5]==0) colour = "#c0c0c0";
 	if(blob[5]==1) colour = "#ff8080"; // Draw black lines
 	if(blob[5]==2) colour = "#ff0000"; // Draw black lines
 	g.strokeStyle = colour;
@@ -174,7 +176,35 @@ function hasLoaded()
 		startGame();
 	}
 }
+function startLevel()
+{
+	arrows=[];
+	blobs=[];
+	finishTime=200;
+	if (currentLevel>2)
+		currentLevel=1;
+	//As more added levels change line above
+	if (currentLevel==2){
+		arrows[arrows.length]  = [ 75, 20,0.707,0.707, 20, -2];
+		arrows[arrows.length]  = [ 400, 90,0.707,0.707, 40, -1];
+		arrows[arrows.length]  = [250, 107,0.707,0.707, 13, 0];
+		arrows[arrows.length]  = [550, 370,0.707,0.707, 44, 0];
+		arrows[arrows.length]  = [100, 350,0.707,0.707, 72, 1];
+		arrows[arrows.length]  = [172, 180,0.707,0.707, 64, 2];
+		return
+	}
+	if (currentLevel==1){
+		arrows[arrows.length]  = [ 30, 80,0.707,0.707, 20, -2];
+		arrows[arrows.length]  = [ 60, 50,0.707,0.707, 40, -1];
+		arrows[arrows.length]  = [100, 300,0.707,0.707, 13, 0];
+		arrows[arrows.length]  = [500, 100,0.707,0.707, 44, 0];
+		arrows[arrows.length]  = [570, 320,0.707,0.707, 72, 1];
+		arrows[arrows.length]  = [540, 350,0.707,0.707, 64, 2];
+		return
+	}
+	
 
+}
 function startGame()
 {
 	// Create 10 object to be drawn on the screen. at random positions moving in random directions
@@ -189,12 +219,13 @@ function startGame()
 	// 'mousemove' event has been seen.
 	arrows = [];
 							// X    Y   Sin  Cos
-	arrows[arrows.length]  = [ 50, 50,0.707,0.707, 20, -2];
-	arrows[arrows.length]  = [150, 50,0.707,0.707, 40, -1];
-	arrows[arrows.length]  = [250, 50,0.707,0.707, 13, 0];
-	arrows[arrows.length]  = [350, 50,0.707,0.707, 44, 0];
-	arrows[arrows.length]  = [450, 50,0.707,0.707, 72, 1];
-	arrows[arrows.length]  = [550, 50,0.707,0.707, 64, 2];
+    
+//	arrows[arrows.length]  = [ 50, 50,0.707,0.707, 20, -2];
+//	arrows[arrows.length]  = [150, 50,0.707,0.707, 40, -1];
+//	arrows[arrows.length]  = [250, 50,0.707,0.707, 13, 0];
+//	arrows[arrows.length]  = [350, 50,0.707,0.707, 44, 0];
+//	arrows[arrows.length]  = [450, 50,0.707,0.707, 72, 1];
+//	arrows[arrows.length]  = [550, 50,0.707,0.707, 64, 2];
 
 //	arrows[arrows.length]  = [ 50,150,0.707,0.707];
 //	arrows[arrows.length]  = [150,150,0.707,0.707];
@@ -341,36 +372,38 @@ function runGame()
 	var i;
 
 	img        = document.getElementById("backdrop");
-	
-	// Update the position of every blog
-	for(i = 0; i < blobs.length; i++) {
-  	    updateBlobPosition(i);
-	}
+	if(introCountdown < 1){
+		// Update the position of every blog
+		for(i = 0; i < blobs.length; i++) {
+			updateBlobPosition(i);
+		}
 
-	// Check to see if the blobs have hit a wall
-	for(i = 0; i < blobs.length; i++) {
-  	    seeIfWallHit(i);
-	}
+		// Check to see if the blobs have hit a wall
+		for(i = 0; i < blobs.length; i++) {
+			seeIfWallHit(i);
+		}
 	
-	for(i = 0; i < blobs.length; i++) {
-  	    SeeIfCannonHit(i);
-	}
+		for(i = 0; i < blobs.length; i++) {
+			SeeIfCannonHit(i);
+		}
+	
 ////////////////////////////////////////////////////////
 	// Draw each of the arrows
-	for(i = 0; i < arrows.length; i++) {
-		var a = arrows[i];
-		if(a[4] == 0){
-			if(i == selected){
-				blobs[blobs.length] = [a[0]+a[3]*26, a[1]+a[2]*26, a[3]*3, a[2]*3, 0, a[5]];
-				a[4]=200;
-			}
+		for(i = 0; i < arrows.length; i++) {
+			var a = arrows[i];
+			if(a[4] == 0){
+				if(i == selected){
+					blobs[blobs.length] = [a[0]+a[3]*26, a[1]+a[2]*26, a[3]*3, a[2]*3, 0, a[5]];
+					a[4]=200;
+				}
 		   
 
-		}  else{
-			arrows[i][4] = arrows[i][4]-1;
-		}
+			}  else{
+				arrows[i][4] = arrows[i][4]-1;
+			}
  	    
 	
+		}
 	}
 	// If we have too many blobs, remove the first one
 	if(blobs.length > 50)
@@ -385,18 +418,62 @@ function runGame()
 	ctx = gameCanvas.getContext("2d");
     ctx.drawImage(img, 0, 0, 600, 400);	
 
-	ctx.fillStyle = "#FFFFFF";
+	ctx.fillStyle = "#000000";
 	ctx.fillRect(290, 190, 20, 20);
-
+	
+	//get rid of grey blobs
+	for(i = 0; i < blobs.length; i++) {
+	    if(blobs[i][5]==0)
+			blobs.splice(i,1);
+	}
+	
 	// Draw all the blobs
 	for(i = 0; i < blobs.length; i++) {
  	    drawTheblob(ctx,i);
 	}
-	
+	var team1;
+	team1 = 0;
+	var team2;
+	team2 = 0;
 	// Draw each of the arrows
 	for(i = 0; i < arrows.length; i++) {
  	    drawTheArrow(ctx,i);
+		if (arrows[i][5]<0)
+			team1 = team1 +1;
+		if (arrows[i][5]>0)
+			team2 = team2 +1;
 	}
-
+	if (team1 == 0 && team2>0){
+		ctx.font = "30px Arial";
+		ctx.fillStyle = "#ffffff";
+		ctx.textAlign = "center";
+		ctx.fillText("team red wins!",300, 200);
+		finishTime--;
+		if (finishTime==0){
+			introCountdown=200;
+			// reseting current level
+		}
+	}
+	if (team2 == 0 && team1>0){
+		ctx.font = "30px Arial";
+		ctx.fillStyle = "#ffffff";
+		ctx.textAlign = "center";
+		ctx.fillText("team blue wins!",300, 200);
+		finishTime--;
+		if(finishTime==0){
+			introCountdown=200;
+			currentLevel++;
+		}
+	}
+	if (introCountdown>0){
+		introCountdown--;
+		ctx.font = "30px Arial";
+		ctx.fillStyle = "#ffffff";
+		ctx.textAlign = "center";
+		ctx.fillText("Intro",300, 200);
+	}
+	if (introCountdown == 150)
+		startLevel();
+	
 	
 }
