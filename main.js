@@ -7,11 +7,11 @@ var currentLevel = 1;
 var finishTime = 200;
 var cursorX = 10;
 var cursorY = 10;
-
+var stopped = 0;
 // Lists of things to draw
 var blobs;
 var arrows;
-var selected = 3;   
+var selected = -1;   
 function drawTheblob(g,i)
 {
 	var blob = blobs[i];	
@@ -158,7 +158,8 @@ function startLoading()
 	eventCatcherDiv = document.getElementById("EventCatcher");
 	// Whenever the mouse moves call the "canvasMove" function
 	eventCatcherDiv.addEventListener("mousemove", canvasMove);
-	
+	eventCatcherDiv.addEventListener("mousedown", canvasClick);
+	eventCatcherDiv.addEventListener("mouseup", canvasUnClick);
 	// Find out which area of the HTML page we are drawing in
 	gameCanvas = document.getElementById("GraphicsBox");
 	
@@ -181,9 +182,19 @@ function startLevel()
 	arrows=[];
 	blobs=[];
 	finishTime=200;
-	if (currentLevel>2)
+	if (currentLevel>3)
 		currentLevel=1;
 	//As more added levels change line above
+	
+	if (currentLevel==3){
+		arrows[arrows.length]  = [ 35, 200,0.707,0.707, 20, -2];
+		arrows[arrows.length]  = [ 305, 85,0.707,0.707, 40, -1];
+		arrows[arrows.length]  = [ 11, 14,0.707,0.707, 13, 0];
+		arrows[arrows.length]  = [477, 60,0.707,0.707, 44, 0];
+		arrows[arrows.length]  = [430, 111,0.707,0.707, 72, 1];
+		arrows[arrows.length]  = [250, 280,0.707,0.707, 64, 2];
+		return
+	}
 	if (currentLevel==2){
 		arrows[arrows.length]  = [ 75, 20,0.707,0.707, 20, -2];
 		arrows[arrows.length]  = [ 400, 90,0.707,0.707, 40, -1];
@@ -258,24 +269,13 @@ function canvasMove(E)
 	var i;
 	// What to do when the mouse moves
 	E = E || window.event;
-
-	////////////////////////////////////////////////
-    // Add a new blob at the current cursor location
-	////////////////////////////////////////////////
-    
-	// Choose a random angle for it to move
-	angle = Math.random() * 2 * 3.141592;
-	
-	// Set the top left corner to be a 'up' and 'left' of the mouse cursor location
-//	blobs[blobs.length] = [E.pageX-11, E.pageY-11, Math.sin(angle), Math.cos(angle)];
-
 	
 	////////////////////////////////////////////////
 	// Update the direction of the arrows
 	////////////////////////////////////////////////
-	for(i = 0; i < arrows.length; i++) {
+	if (selected >=0){
 		var dx,dy;
-		var arrow = arrows[i];
+		var arrow = arrows[selected];
 		
 		// Work out the distance in X and Y to between the arrow and mouse pointer
 		dx = E.pageX - arrow[0];
@@ -289,10 +289,39 @@ function canvasMove(E)
 			arrow[2] = dy / length;
 			arrow[3] = dx / length;
 		}
+	}
+}
+
+function canvasClick(E)
+{
+	var angle;
+	var i;
+	// What to do when the mouse moves
+	E = E || window.event;
+
+	for(i = 0; i < arrows.length; i++) {
+		var dx,dy;
+		var arrow = arrows[i];
+		
+		// Work out the distance in X and Y to between the arrow and mouse pointer
+		dx = E.pageX - arrow[0];
+		dy = E.pageY - arrow[1];
 		if(dx*dx+dy*dy<20*20) {
-			selected=i;
+			if (arrow[5]<0)
+				selected=i;
 		}
 	}
+	if (E.pageX<20 && E.pageY<20){
+		if (stopped == 1) {
+			stopped = 0
+		} else {
+			stopped = 1
+		}
+	}
+}
+function canvasUnClick(E)
+{
+	selected=-1;
 }
 
 function updateBlobPosition(i) 
@@ -361,7 +390,46 @@ function SeeIfCannonHit(i) {
 	}
 	
 }
-
+function targetCannon(i)
+{
+	var arrow = arrows[i];
+	var x,y,rx,ry;
+	var sine,cosine;
+	var target = -1;
+	var nearestDistance = 2000000;
+	for(j=0; j < arrows.length; j++){
+		var dx,dy;
+		dx=arrows[j][0] - arrow[0];
+		dy=arrows[j][1] - arrow[1];
+		if (dx*dx+dy*dy<nearestDistance){
+			if (j != i){
+				if(arrows[j][5]<2){
+					target = j;
+					nearestDistance=dx*dx+dy*dy
+				}
+			}
+		}
+		
+	}
+	if(i != target) {
+		arrow[3]=arrows[target][0] - arrow[0];
+		arrow[2]=arrows[target][1] - arrow[1];
+		distance = Math.sqrt(arrow[2]*arrow[2] + arrow[3]*arrow[3])
+		if(distance>0) {
+			arrow[2] /= distance;
+			arrow[3] /= distance;
+		}
+	}
+}
+function redPlayer(){
+	var closestDistance;
+	var closest;
+	for(i = 0; i < arrows.length; i++) {
+		if (arrows[i][5]>0){
+			targetCannon(i);	
+		}
+	}
+}
 function runGame()
 {
 	///////////////////////////////////////////////////
@@ -370,39 +438,42 @@ function runGame()
 	var ctx;
 	var img;
 	var i;
-
-	img        = document.getElementById("backdrop");
+	var img2;
+	img2		= document.getElementById("pause");
+	img        	= document.getElementById("backdrop");
 	if(introCountdown < 1){
-		// Update the position of every blog
-		for(i = 0; i < blobs.length; i++) {
-			updateBlobPosition(i);
-		}
+		redPlayer();
+		// Update the position of every blob
+		if (stopped == 0){
+			for(i = 0; i < blobs.length; i++) {
+				updateBlobPosition(i);
+			}
 
-		// Check to see if the blobs have hit a wall
-		for(i = 0; i < blobs.length; i++) {
-			seeIfWallHit(i);
-		}
+			// Check to see if the blobs have hit a wall
+			for(i = 0; i < blobs.length; i++) {
+				seeIfWallHit(i);
+			}
 	
-		for(i = 0; i < blobs.length; i++) {
-			SeeIfCannonHit(i);
+			for(i = 0; i < blobs.length; i++) {
+				SeeIfCannonHit(i);
+			}
 		}
-	
 ////////////////////////////////////////////////////////
-	// Draw each of the arrows
-		for(i = 0; i < arrows.length; i++) {
-			var a = arrows[i];
-			if(a[4] == 0){
-				if(i == selected){
+	// See if each of the arrow will fire
+		if (stopped == 0){
+			for(i = 0; i < arrows.length; i++) {
+				var a = arrows[i];
+				
+				// See if the cannon is ready to fire
+				if(a[4] == 0){		
 					blobs[blobs.length] = [a[0]+a[3]*26, a[1]+a[2]*26, a[3]*3, a[2]*3, 0, a[5]];
 					a[4]=200;
+				}  else{
+					arrows[i][4] = arrows[i][4]-1;
 				}
-		   
-
-			}  else{
-				arrows[i][4] = arrows[i][4]-1;
+			
+		
 			}
- 	    
-	
 		}
 	}
 	// If we have too many blobs, remove the first one
@@ -417,7 +488,7 @@ function runGame()
 	// Draw the background image
 	ctx = gameCanvas.getContext("2d");
     ctx.drawImage(img, 0, 0, 600, 400);	
-
+	
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(290, 190, 20, 20);
 	
@@ -470,10 +541,19 @@ function runGame()
 		ctx.font = "30px Arial";
 		ctx.fillStyle = "#ffffff";
 		ctx.textAlign = "center";
-		ctx.fillText("Intro",300, 200);
+		if(introCountdown>160)
+			ctx.fillText("5",300, 200);
+		else if(introCountdown>120)
+			ctx.fillText("4",300, 200);
+		else if(introCountdown>80)
+			ctx.fillText("3",300, 200);
+		else if(introCountdown>40)
+			ctx.fillText("2",300, 200);
+		else if(introCountdown>0)
+			ctx.fillText("1",300, 200);
 	}
 	if (introCountdown == 150)
 		startLevel();
 	
-	
+	ctx.drawImage(img2, 0, 0, 20, 20);	
 }
